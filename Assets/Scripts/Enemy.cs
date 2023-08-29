@@ -4,19 +4,13 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    
-    void Start()
-    {
-        
-    }
 
-    
     void Update()
     {
         
         transform.Translate(Vector3.down * 4 * Time.deltaTime);
 
-        if(transform.position.y <= -5)
+        if(transform.position.y <= -7)
         {
             transform.position = (new Vector3(Random.Range(-8f,8f),8 , 0));
         }
@@ -26,7 +20,7 @@ public class Enemy : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if(other.gameObject.tag == "Player")
+        if(other.gameObject.CompareTag("Player"))
         {
             Player player = other.transform.GetComponent<Player>();
             
@@ -37,11 +31,11 @@ public class Enemy : MonoBehaviour
                 player.Damage();
             }
         }
-        else if(other.gameObject.tag == "Laser")
+        else if(other.gameObject.CompareTag("Laser"))
         {
             Object.Destroy(other.gameObject);
             Object.Destroy(this.gameObject);
-            print("Tarhiel is dead");
+
         }
         
         

@@ -4,28 +4,33 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-public float horizontalInput;
-public float verticalInput;
-private float _speed = 10f;
-private Vector3 _laserOffset = new Vector3(0, 0.5f ,0);
-[SerializeField]
-private float _fireRate = 0.3f;
-private float _canFire = 0f;
-[SerializeField]
-private Object _laserPrefab;
-[SerializeField]
-int _lives = 3;
-SpawnManager _spawnManager;
+    public float horizontalInput;
+    public float verticalInput;
+    private float _speed = 6f;
+    private Vector3 _laserOffset = new Vector3(0, 0.5f ,0);
+    [SerializeField]
+    private float _fireRate = 0.3f;
+    private float _canFire = 0f;
+    [SerializeField]
+    private Object _laserPrefab;
+    [SerializeField]
+    private Object _tripleShotPrefab;
+    int _lives = 3;
+    SpawnManager _spawnManager;
+    [SerializeField]
+    private bool _isSpeedBoostActive;
+    private bool _isTripleShotActive;
+
     
     void Start()
     {
-    transform.position = new Vector3(0, 0, 0);
-    _spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
+        transform.position = new Vector3(0, 0, 0);
+        _spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
 
-    if(_spawnManager == null)
-    {
-        Debug.LogError("The Spawn Manager is NULL");
-    }
+        if(_spawnManager == null)
+        {
+            Debug.LogError("The Spawn Manager is NULL");
+        }
 
     }
    
@@ -48,7 +53,7 @@ SpawnManager _spawnManager;
         horizontalInput = Input.GetAxis("Horizontal");
         verticalInput = Input.GetAxis("Vertical");
         
-        transform.position = new Vector3(transform.position.x, Mathf.Clamp(transform.position.y, -3.8f, 0), 0);
+        transform.position = new Vector3(transform.position.x, Mathf.Clamp(transform.position.y, -5f, 0), 0);
 
         if(transform.position.x >= 11.3f)
         {
@@ -61,8 +66,15 @@ SpawnManager _spawnManager;
     }
     void ShootLaser()
     { 
-            _canFire = Time.time + _fireRate;
+        _canFire = Time.time + _fireRate;
+        if (_isTripleShotActive == true)
+        {
+            Instantiate(_tripleShotPrefab, transform.position + _laserOffset, Quaternion.identity);
+        }
+        else
+        {
             Instantiate(_laserPrefab, transform.position + _laserOffset, Quaternion.identity);
+        }
         
     }
     public void Damage()
@@ -71,10 +83,33 @@ SpawnManager _spawnManager;
         
         if(_lives < 1)
         {
-            //add stop spawning
             
             Destroy(this.gameObject);
             _spawnManager.OnPlayerDeath();
         }
+    }
+
+    public void TripleShotActive()
+    {
+        _isTripleShotActive = true;
+        StartCoroutine(TripleShotPowerDownRoutine());
+    }
+
+    IEnumerator TripleShotPowerDownRoutine()
+    {
+        yield return new WaitForSeconds(5);
+        _isTripleShotActive = false;
+    }
+
+    public void SpeedActive()
+    {
+        _isSpeedBoostActive = true;
+        SpeedPowerDownRoutine();
+    }
+
+    IEnumerator SpeedPowerDownRoutine()
+    {
+        yield return new WaitForSeconds(8f);
+        _isSpeedBoostActive = false;
     }
 }

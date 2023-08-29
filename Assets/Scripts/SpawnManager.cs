@@ -10,12 +10,13 @@ public class SpawnManager : MonoBehaviour
     GameObject _enemy;
     [SerializeField]
     GameObject _enemyContainer;
+    [SerializeField]
+    private GameObject _tripleShotPrefab;
 
-    private Quaternion _spawnAngle;
     void Start()
     {
-        _spawnAngle = new Quaternion (0, 180, 0, 0);
-        StartCoroutine(SpawnRoutine());
+        StartCoroutine(SpawnEnemyRoutine());
+        StartCoroutine(SpawnPowerupRoutine());
     }
 
     
@@ -24,13 +25,24 @@ public class SpawnManager : MonoBehaviour
         
     }
     
-    IEnumerator SpawnRoutine()
+    IEnumerator SpawnEnemyRoutine()
     {
         while(_isDead == false)
         {
-            GameObject newEnemy = Instantiate(_enemy, new Vector3(Random.Range(-8f,8f), 8, 0), _spawnAngle);
+            Vector3 posToSpawn = new(Random.Range(-8f, 8f), 8, 0);
+            GameObject newEnemy = Instantiate(_enemy, posToSpawn , Quaternion.identity);
             newEnemy.transform.parent = _enemyContainer.transform;
             yield return new WaitForSeconds(Random.Range(.5f, 4f));
+        }
+    }
+
+    IEnumerator SpawnPowerupRoutine()
+    {
+        while(_isDead == false)
+        {
+            Vector3 posToSpawn = new(Random.Range(-8f, 8f), 7, 0);
+            Instantiate(_tripleShotPrefab, posToSpawn, Quaternion.identity);
+            yield return new WaitForSeconds(Random.Range(4f, 7f));
         }
     }
 
