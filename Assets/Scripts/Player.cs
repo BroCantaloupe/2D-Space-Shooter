@@ -7,29 +7,40 @@ public class Player : MonoBehaviour
     public float horizontalInput;
     public float verticalInput;
     private float _speed = 6f;
-    private Vector3 _laserOffset = new Vector3(0, 0.5f ,0);
-    [SerializeField]
+    private float _boostSpeed = 10f;
+
     private float _fireRate = 0.3f;
+    private Vector3 _laserOffset = new Vector3(0, 0.5f ,0);
     private float _canFire = 0f;
     [SerializeField]
     private Object _laserPrefab;
     [SerializeField]
     private Object _tripleShotPrefab;
+
     int _lives = 3;
     SpawnManager _spawnManager;
-    [SerializeField]
     private bool _isSpeedBoostActive;
     private bool _isTripleShotActive;
+    private bool _isSheildActive;
+    [SerializeField]
+    private GameObject _shieldVisualizer;
 
+    private int _score;
+    private UIManager _uiManager;
     
     void Start()
     {
         transform.position = new Vector3(0, 0, 0);
         _spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
-
+        _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
         if(_spawnManager == null)
         {
             Debug.LogError("The Spawn Manager is NULL");
+        }
+        if(_uiManager == null)
+        {
+            Debug.LogError("The UI Manager is NULL");
+
         }
 
     }
@@ -48,10 +59,18 @@ public class Player : MonoBehaviour
     void CalculateMovement()
     {
         Vector3 direction = new Vector3(horizontalInput, verticalInput, 0);
-        transform.Translate(direction * _speed * Time.deltaTime);
-
         horizontalInput = Input.GetAxis("Horizontal");
         verticalInput = Input.GetAxis("Vertical");
+        
+        if(_isSpeedBoostActive == false)
+        {
+            transform.Translate(_speed * Time.deltaTime * direction);
+        }
+        else
+        {
+            transform.Translate(_boostSpeed * Time.deltaTime * direction);
+        }
+
         
         transform.position = new Vector3(transform.position.x, Mathf.Clamp(transform.position.y, -5f, 0), 0);
 
@@ -79,13 +98,22 @@ public class Player : MonoBehaviour
     }
     public void Damage()
     {
-        _lives--;
+        
+        if(_isSheildActive == false)
+        {
+            _lives--;
+            _uiManager.UpdateLives(_lives);
+        }
+        else
+        {
+            _isSheildActive = false;
+            _shieldVisualizer.SetActive(false);
+        }
         
         if(_lives < 1)
         {
-            
-            Destroy(this.gameObject);
             _spawnManager.OnPlayerDeath();
+            Destroy(this.gameObject);
         }
     }
 
@@ -104,12 +132,24 @@ public class Player : MonoBehaviour
     public void SpeedActive()
     {
         _isSpeedBoostActive = true;
-        SpeedPowerDownRoutine();
+        StartCoroutine(SpeedPowerDownRoutine());
     }
 
     IEnumerator SpeedPowerDownRoutine()
     {
         yield return new WaitForSeconds(8f);
         _isSpeedBoostActive = false;
+    }
+
+    public void ShieldsOn()
+    {
+        _isSheildActive = true;
+        _shieldVisualizer.SetActive(true);
+    }
+
+    public void AddScore(int points)
+    {
+        _score += points;
+        _uiManager.UpdateScore(_score);
     }
 }

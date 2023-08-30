@@ -43,7 +43,8 @@ public class Powerup : MonoBehaviour
                     case 1:
                         player.SpeedActive();
                         break;
-                    case 2: Debug.Log("Shield pwerup");
+                    case 2:
+                        player.ShieldsOn();
                         break;
                     default: Debug.Log("Invalid Powerup");
                         break;

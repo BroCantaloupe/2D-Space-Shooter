@@ -4,14 +4,15 @@ using UnityEngine;
 
 public class SpawnManager : MonoBehaviour
 {
-    [SerializeField]
     bool _isDead = false;
+
     [SerializeField]
     GameObject _enemy;
     [SerializeField]
     GameObject _enemyContainer;
+
     [SerializeField]
-    private GameObject _tripleShotPrefab;
+    private GameObject[] _powerup;
 
     void Start()
     {
@@ -41,7 +42,9 @@ public class SpawnManager : MonoBehaviour
         while(_isDead == false)
         {
             Vector3 posToSpawn = new(Random.Range(-8f, 8f), 7, 0);
-            Instantiate(_tripleShotPrefab, posToSpawn, Quaternion.identity);
+            int randomPowerup = Random.Range(0, 3);
+            
+            Instantiate(_powerup[randomPowerup], posToSpawn, Quaternion.identity);
             yield return new WaitForSeconds(Random.Range(4f, 7f));
         }
     }

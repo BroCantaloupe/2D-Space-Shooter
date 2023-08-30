@@ -4,7 +4,12 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-
+    private Player _player;
+    private void Start()
+    {
+        _player = GameObject.Find("Player").transform.GetComponent<Player>();
+        
+    }
     void Update()
     {
         
@@ -22,18 +27,21 @@ public class Enemy : MonoBehaviour
     {
         if(other.gameObject.CompareTag("Player"))
         {
-            Player player = other.transform.GetComponent<Player>();
-            
+
             Object.Destroy(gameObject);
             
-            if(player != null)
+            if(_player != null)
             {
-                player.Damage();
+                _player.Damage();
             }
         }
         else if(other.gameObject.CompareTag("Laser"))
         {
             Object.Destroy(other.gameObject);
+            if(_player != null)
+            {
+                _player.AddScore(10);
+            }
             Object.Destroy(this.gameObject);
 
         }
