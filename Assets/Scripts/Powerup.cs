@@ -7,6 +7,8 @@ public class Powerup : MonoBehaviour
     private int speed = 3;
     [SerializeField]
     private int powerupID;
+    [SerializeField]
+    private AudioClip _clip;
     //0 = triple
     //1 = speed
     //2 = shield
@@ -33,6 +35,7 @@ public class Powerup : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            AudioSource.PlayClipAtPoint(_clip, transform.position);
             Player player = GameObject.Find("Player").GetComponent<Player>();
             if (player != null)
             {

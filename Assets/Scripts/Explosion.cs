@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class Explosion : MonoBehaviour
 {
-    // Start is called before the first frame update
+    private AudioSource _audioSource;
     void Start()
     {
-        Destroy(this.gameObject, 1.1f);
+        Destroy(this.gameObject, 1.6f);
     }
 
     // Update is called once per frame

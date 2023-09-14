@@ -8,11 +8,20 @@ public class Enemy : MonoBehaviour
     private Animator _explosionAnim;
     private float _speed = 4f;
     private bool _explosionSequence;
+    private AudioSource _audioSource;
+    [SerializeField]
+    private GameObject _laserPrefab;
+
+
+    private float _fireRate = 3f;
+    private float _canFire = -1;
+
     private void Start()
     {
         _player = GameObject.Find("Player").transform.GetComponent<Player>();
         _explosionAnim = GetComponent<Animator>();
-        if(_explosionAnim == null)
+        _audioSource = GetComponent<AudioSource>();
+        if (_explosionAnim == null)
         {
             Debug.LogError("Animator is NULL");
         }
@@ -20,17 +29,39 @@ public class Enemy : MonoBehaviour
         {
             Debug.LogError("Player is NULL");
         }
+        if(_audioSource == null)
+        {
+            Debug.LogError("Audio Source is NULL");
+        }
+
     }
     void Update()
     {
-        
+        CalculateMovement();
+    
+        if(Time.time > _canFire)
+        {
+            _fireRate = Random.Range(3f, 7f);
+            _canFire = Time.time + _fireRate;
+            GameObject enemyLaser = Instantiate(_laserPrefab, transform.position, Quaternion.identity);
+            LaserBehavior[] lasers = enemyLaser.GetComponentsInChildren<LaserBehavior>();
+
+            for (int i = 0; i < lasers.Length; i++)
+            {
+                lasers[i].AssignEnemyLaser();
+            }
+
+        }
+    }
+
+    void CalculateMovement()
+    {
         transform.Translate(Vector3.down * _speed * Time.deltaTime);
 
-        if(transform.position.y <= -7)
+        if (transform.position.y <= -7)
         {
-            transform.position = (new Vector3(Random.Range(-8f,8f),8 , 0));
+            transform.position = (new Vector3(Random.Range(-8f, 8f), 8, 0));
         }
-
     }
 
 
@@ -40,6 +71,7 @@ public class Enemy : MonoBehaviour
         {
             _explosionSequence = true;
             _speed = 0;
+            _audioSource.Play();
             _explosionAnim.SetTrigger("OnEnemyDeath");
             Object.Destroy(gameObject, 1.1f);
             
@@ -51,6 +83,7 @@ public class Enemy : MonoBehaviour
         else if(other.gameObject.CompareTag("Laser") && _explosionSequence == false)
         {
             _explosionSequence = true;
+            _audioSource.Play();
             _speed = 0;
             Object.Destroy(other.gameObject);
             if(_player != null)
