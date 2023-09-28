@@ -11,7 +11,8 @@ public class Enemy : MonoBehaviour
     private AudioSource _audioSource;
     [SerializeField]
     private GameObject _laserPrefab;
-
+    private bool _isDead;
+    private SpawnManager _spawnManager;
 
     private float _fireRate = 3f;
     private float _canFire = -1;
@@ -21,6 +22,7 @@ public class Enemy : MonoBehaviour
         _player = GameObject.Find("Player").transform.GetComponent<Player>();
         _explosionAnim = GetComponent<Animator>();
         _audioSource = GetComponent<AudioSource>();
+        _spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
         if (_explosionAnim == null)
         {
             Debug.LogError("Animator is NULL");
@@ -33,13 +35,16 @@ public class Enemy : MonoBehaviour
         {
             Debug.LogError("Audio Source is NULL");
         }
-
+        if (_spawnManager == null)
+        {
+            Debug.LogError("powerup is NULL");
+        }
     }
     void Update()
     {
         CalculateMovement();
     
-        if(Time.time > _canFire)
+        if(Time.time > _canFire && _isDead == false)
         {
             _fireRate = Random.Range(3f, 7f);
             _canFire = Time.time + _fireRate;
@@ -50,7 +55,6 @@ public class Enemy : MonoBehaviour
             {
                 lasers[i].AssignEnemyLaser();
             }
-
         }
     }
 
@@ -74,6 +78,7 @@ public class Enemy : MonoBehaviour
             _audioSource.Play();
             _explosionAnim.SetTrigger("OnEnemyDeath");
             Object.Destroy(gameObject, 1.1f);
+            _isDead = true;
             
             if(_player != null)
             {
@@ -92,11 +97,20 @@ public class Enemy : MonoBehaviour
             }
             _explosionAnim.SetTrigger("OnEnemyDeath");
             Object.Destroy(this.gameObject, 1.1f);
-
+            _isDead = true;
+            int powerupChance = Random.Range(0, 4);
+            if(powerupChance == 0)
+            {
+                StartCoroutine(EnemyPowerup());
+            }
         }
-        
         
     }
 
+    IEnumerator EnemyPowerup()
+    {
+        yield return new WaitForSeconds(0.5f);
+        _spawnManager.NewEnemyPowerup(transform.position);
+    }
     
 }

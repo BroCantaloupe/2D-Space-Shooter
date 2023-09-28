@@ -17,6 +17,10 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private TMP_Text _restartText;
     private GameManager _gameManager;
+    [SerializeField]
+    private GameObject[] _shieldsImage;
+    [SerializeField]
+    private TMP_Text _ammoText;
     void Start()
     {
         _scoreText.text = "Score: " + 0;
@@ -42,6 +46,45 @@ public class UIManager : MonoBehaviour
         {
             GameOverSequence();
         }
+    }
+
+    public void AddShieldLives(int currentShieldLives)
+    {
+        switch (currentShieldLives - 1)
+        {
+            case 0: _shieldsImage[0].gameObject.SetActive(true);
+                break;
+            case 1: _shieldsImage[1].gameObject.SetActive(true);
+                break;
+            case 2: _shieldsImage[2].gameObject.SetActive(true);
+                break;
+            default: Debug.Log("Invalid Case");
+                break;
+        }
+    }
+
+    public void SubtractShieldLives(int currentShieldLives)
+    {
+        switch (currentShieldLives)
+        {
+            case 0:
+                _shieldsImage[0].gameObject.SetActive(false);
+                break;
+            case 1:
+                _shieldsImage[1].gameObject.SetActive(false);
+                break;
+            case 2:
+                _shieldsImage[2].gameObject.SetActive(false);
+                break;
+            default:
+                Debug.Log("Invalid Case");
+                break;
+        }
+    }
+
+    public void UpdateAmmo(int ammoCount)
+    {
+        _ammoText.text = ("Ammo: " + ammoCount + "/30");
     }
 
     public void GameOverSequence()

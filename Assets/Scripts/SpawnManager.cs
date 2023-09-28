@@ -14,11 +14,6 @@ public class SpawnManager : MonoBehaviour
     [SerializeField]
     private GameObject[] _powerup;
 
-    void Start()
-    {
-
-
-    }
 
     public void StartSpawning()
     {
@@ -48,9 +43,16 @@ public class SpawnManager : MonoBehaviour
             int randomPowerup = Random.Range(0, 3);
             
             Instantiate(_powerup[randomPowerup], posToSpawn, Quaternion.identity);
-            yield return new WaitForSeconds(Random.Range(4f, 7f));
+            yield return new WaitForSeconds(Random.Range(4f, 7f)); 
         }
     }
+
+    public void NewEnemyPowerup(Vector3 enemyTransform)
+    {
+        int randomEnemyPowerup = Random.Range(3, 7);
+        Instantiate(_powerup[randomEnemyPowerup], enemyTransform, Quaternion.identity);
+    }
+
 
     public void OnPlayerDeath()
     {

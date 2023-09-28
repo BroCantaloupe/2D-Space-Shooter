@@ -8,6 +8,7 @@ public class Asteroid : MonoBehaviour
     private Object explosionPrefab;
     private float rotateSpeed = 10f;
     private SpawnManager _spawnManager;
+    private bool _isHit;
     void Start()
     {
         _spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
@@ -24,12 +25,13 @@ public class Asteroid : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Laser"))
+        if (other.CompareTag("Laser") && _isHit == false)
         {
             _spawnManager.StartSpawning();
             Instantiate(explosionPrefab, transform.position, Quaternion.identity);
             Destroy(other.gameObject);
             Destroy(this.gameObject, 0.4f);
+            _isHit = true;
         }
     }
 }

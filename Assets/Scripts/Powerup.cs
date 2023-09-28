@@ -12,6 +12,9 @@ public class Powerup : MonoBehaviour
     //0 = triple
     //1 = speed
     //2 = shield
+    //3 = ammo
+    //4 = health
+    //5 = special fire
 
     private void Start()
     {
@@ -47,7 +50,16 @@ public class Powerup : MonoBehaviour
                         player.SpeedActive();
                         break;
                     case 2:
-                        player.ShieldsOn();
+                        player.ShieldGet();
+                        break;
+                    case 3:
+                        player.AddAmmo();
+                        break;
+                    case 4:
+                        player.AddLife();
+                        break;
+                    case 5:
+                        player.ToggleVoidBall();
                         break;
                     default: Debug.Log("Invalid Powerup");
                         break;
@@ -57,6 +69,7 @@ public class Powerup : MonoBehaviour
             Destroy(this.gameObject);
         }
     }
+
 }
 
 
