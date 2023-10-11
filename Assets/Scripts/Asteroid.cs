@@ -25,11 +25,14 @@ public class Asteroid : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Laser") && _isHit == false)
+        if (other.CompareTag("Laser") || other.CompareTag("Void Ball") && _isHit == false)
         {
             _spawnManager.StartSpawning();
             Instantiate(explosionPrefab, transform.position, Quaternion.identity);
-            Destroy(other.gameObject);
+            if (other.CompareTag("Laser"))
+            {
+                Destroy(other.gameObject);
+            }
             Destroy(this.gameObject, 0.4f);
             _isHit = true;
         }

@@ -73,6 +73,10 @@ public class LaserBehavior : MonoBehaviour
             Destroy(other.gameObject);
             Destroy(this.gameObject);
         }
+        if (other.CompareTag("Void Ball"))
+        {
+            Destroy(this.gameObject);
+        }
 
     }
 }

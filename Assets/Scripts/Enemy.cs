@@ -98,13 +98,31 @@ public class Enemy : MonoBehaviour
             _explosionAnim.SetTrigger("OnEnemyDeath");
             Object.Destroy(this.gameObject, 1.1f);
             _isDead = true;
-            int powerupChance = Random.Range(0, 4);
+            int powerupChance = Random.Range(0, 5);
             if(powerupChance == 0)
             {
                 StartCoroutine(EnemyPowerup());
             }
         }
-        
+        else if (other.gameObject.CompareTag("Void Ball") && _explosionSequence == false)
+        {
+            _explosionSequence = true;
+            _audioSource.Play();
+            _speed = 0;
+            if (_player != null)
+            {
+                _player.AddScore(20);
+            }
+            _explosionAnim.SetTrigger("OnEnemyDeath");
+            Object.Destroy(this.gameObject, 1.1f);
+            _isDead = true;
+            int powerupChance = Random.Range(0, 6);
+            if (powerupChance == 0)
+            {
+                StartCoroutine(EnemyPowerup());
+            }
+        }
+
     }
 
     IEnumerator EnemyPowerup()

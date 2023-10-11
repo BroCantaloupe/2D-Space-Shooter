@@ -40,7 +40,7 @@ public class SpawnManager : MonoBehaviour
         while(_isDead == false)
         {
             Vector3 posToSpawn = new(Random.Range(-8f, 8f), 7, 0);
-            int randomPowerup = Random.Range(0, 3);
+            int randomPowerup = Random.Range(0, 4);
             
             Instantiate(_powerup[randomPowerup], posToSpawn, Quaternion.identity);
             yield return new WaitForSeconds(Random.Range(4f, 7f)); 
@@ -49,7 +49,7 @@ public class SpawnManager : MonoBehaviour
 
     public void NewEnemyPowerup(Vector3 enemyTransform)
     {
-        int randomEnemyPowerup = Random.Range(3, 7);
+        int randomEnemyPowerup = Random.Range(3, 8);
         Instantiate(_powerup[randomEnemyPowerup], enemyTransform, Quaternion.identity);
     }
 

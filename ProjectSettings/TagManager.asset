@@ -7,11 +7,12 @@ TagManager:
   - Enemy
   - Laser
   - Enemy Laser
+  - Void Ball
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Void Ball Layer
   - Water
   - UI
   - Post Processing

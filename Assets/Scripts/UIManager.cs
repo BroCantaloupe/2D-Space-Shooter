@@ -21,6 +21,8 @@ public class UIManager : MonoBehaviour
     private GameObject[] _shieldsImage;
     [SerializeField]
     private TMP_Text _ammoText;
+    [SerializeField]
+    private Slider _thrusterSlider;
     void Start()
     {
         _scoreText.text = "Score: " + 0;
@@ -31,7 +33,7 @@ public class UIManager : MonoBehaviour
         {
             Debug.LogError("Game Manager is NULL");
         }
-
+        _thrusterSlider.value = 1f;
     }
 
     public void UpdateScore(int playerScore)
@@ -104,5 +106,10 @@ public class UIManager : MonoBehaviour
             yield return new WaitForSeconds(0.8f);
         }
 
+    }
+
+    public void ThrusterSlider(float sliderValue)
+    {
+        _thrusterSlider.value = sliderValue;
     }
 }

@@ -9,6 +9,7 @@ public class Player : MonoBehaviour
     private float _speed = 6f;
     private float _boostSpeed = 10f;
     private float _shiftSpeed = 0f;
+    private float _shiftTime = 1.0f;
 
     private float _fireRate = 0.3f;
     private Vector3 _laserOffset = new(0, 0.5f ,0);
@@ -28,7 +29,7 @@ public class Player : MonoBehaviour
     private bool _isTripleShotActive;
     private bool _isSheildActive;
     private bool _isVoidBallActive;
-    [SerializeField]
+    private bool _isVoidBallShot;
     private int _shieldLives;
     [SerializeField]
     private GameObject _shieldVisualizer;
@@ -38,21 +39,20 @@ public class Player : MonoBehaviour
 
     private int _score;
     private UIManager _uiManager;
-    private VoidBallBehavior _voidBallBehavior;
-    private Vector3 playerPosition;
     [SerializeField]
     private GameObject _voidBallPrefab;
-
+    private Animator _cameraAnimator;
     void Start()
     {
         transform.position = new Vector3(0, 0, 0);
         _spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
         _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
         _audioSource = GetComponent<AudioSource>();
-        _voidBallBehavior = GameObject.Find("Void_Ball_Container").GetComponent<VoidBallBehavior>();
-        if(_voidBallBehavior == null)
+        _cameraAnimator = GameObject.Find("Main Camera").GetComponent<Animator>();
+
+        if(_cameraAnimator == null)
         {
-            Debug.LogError("Void Ball Container is NULL");
+            Debug.LogError("Camera Animator is NULL");
         }
         if(_spawnManager == null)
         {
@@ -77,33 +77,61 @@ public class Player : MonoBehaviour
     void Update()
     {
         CalculateMovement();
-        while(_isVoidBallActive == true)
-        {
-            StartCoroutine(BallMovementDelay());
-        }
+
         if (Input.GetKeyDown(KeyCode.Space) && Time.time > _canFire && _laserAmmo != 0 && _isVoidBallActive == false)
         {
             ShootLaser();
             _laserAmmo--;
             _uiManager.UpdateAmmo(_laserAmmo);
         }
-        if(Input.GetKeyDown(KeyCode.Space) && Time.time > _canFire && _isVoidBallActive == false)
+        if(Input.GetKeyDown(KeyCode.Space) && Time.time > _canFire && _isVoidBallActive == true && _isVoidBallShot == false)
         {
+            _isVoidBallShot = true;
             Instantiate(_voidBallPrefab, transform.position, Quaternion.identity);
+            StartCoroutine(VoidBallRespawn());
         }
 
         
+    }
+
+    IEnumerator VoidBallRespawn()
+    {
+        yield return new WaitForSeconds(1.2f);
+        _isVoidBallShot = false;
     }
 
     void CalculateMovement()
     {
         if (Input.GetKey(KeyCode.LeftShift))
         {
-            _shiftSpeed = 2f;
+            if(_isSpeedBoostActive == true)
+            {
+                _shiftTime -= Time.deltaTime;
+            }
+            else
+            {
+                _shiftTime -= (Time.deltaTime * 2);
+            }
+            if(_shiftTime != 0)
+            {
+                _shiftSpeed = 5f;
+            }
+            if(_shiftTime <= 0)
+            {
+                _shiftTime = 0f;
+                _shiftSpeed = -1.3f;
+            }
+            _uiManager.ThrusterSlider(_shiftTime);
         }
         else
         {
             _shiftSpeed = 0f;
+            _shiftTime += (Time.deltaTime / 3);
+            if(_shiftTime >= 1.0f)
+            {
+                _shiftTime = 1.0f;
+            }
+            _uiManager.ThrusterSlider(_shiftTime);
         }
 
         _horizontalInput = Input.GetAxis("Horizontal");
@@ -137,11 +165,6 @@ public class Player : MonoBehaviour
         {
             Instantiate(_tripleShotPrefab, transform.position + _laserOffset, Quaternion.identity);
         }
-        else if(_isVoidBallActive == true)
-        {
-
-            _laserAmmo++;
-        }
         else
         {
             Instantiate(_laserPrefab, transform.position + _laserOffset, Quaternion.identity);
@@ -158,7 +181,7 @@ public class Player : MonoBehaviour
             _lives--;
             _uiManager.UpdateLives(_lives);
             UpdateDamageVisual();
-
+            _cameraAnimator.SetTrigger("playerHurt");
         }
         else
         {
@@ -170,8 +193,8 @@ public class Player : MonoBehaviour
             _shieldVisualizer.SetActive(false);
             }
         }
-        
-        if(_lives < 1)
+
+        if (_lives < 1)
         {
             _spawnManager.OnPlayerDeath();
             Destroy(this.gameObject);
@@ -232,7 +255,7 @@ public class Player : MonoBehaviour
 
     public void AddAmmo()
     {
-        _laserAmmo += 10;
+        _laserAmmo += 5;
         if(_laserAmmo > 30)
         {
             _laserAmmo = 30;
@@ -245,7 +268,7 @@ public class Player : MonoBehaviour
     {
         _isVoidBallActive = true;
         StartCoroutine(VoidBallPowerDownRoutine());
-        //Instantiate(_voidBallPrefab, transform.position, Quaternion.identity);
+        Instantiate(_voidBallPrefab, transform.position, Quaternion.identity);
     }
 
     IEnumerator VoidBallPowerDownRoutine()
@@ -273,11 +296,5 @@ public class Player : MonoBehaviour
         }
 
     }
-    IEnumerator BallMovementDelay()
-    {
-        yield return new WaitForSeconds(0.3f);
-        playerPosition = transform.position;
-        _voidBallBehavior.BallMovement(playerPosition, _speed);
-    }
-
+    
 }
