@@ -9,7 +9,6 @@ public class VoidBallBehavior : MonoBehaviour
     private bool _canBallBeFired;
     private float _ballFireAngle;
     private Vector3 _direction;
-    [SerializeField]
     private Transform _playerTransform;
     private CircleCollider2D _collider;
     void Start()

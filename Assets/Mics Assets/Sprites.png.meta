@@ -123,7 +123,7 @@ TextureImporter:
         x: 0
         y: 793
         width: 320
-        height: 151
+        height: 118
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1322,7 +1322,7 @@ TextureImporter:
         width: 53
         height: 52
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -1330,6 +1330,111 @@ TextureImporter:
       bones: []
       spriteID: 380a547c05e3b064abcbeb335dbf4584
       internalID: -1701640408
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Enemysprite2
+      rect:
+        serializedVersion: 2
+        x: 4
+        y: 914
+        width: 24
+        height: 29
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a951d0ade4fdfa04a85139ffd64afd23
+      internalID: -274434493
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TP1
+      rect:
+        serializedVersion: 2
+        x: 148
+        y: 931
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 42642ae3ea08f0943bc80aaeb99becee
+      internalID: 1797319574
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TP2
+      rect:
+        serializedVersion: 2
+        x: 164
+        y: 931
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 644b4c9ec55dc454bb20052546e6c40e
+      internalID: 1217978425
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TP3
+      rect:
+        serializedVersion: 2
+        x: 179
+        y: 932
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c0f8cb5b4dca85b488d321e05e5cdfe1
+      internalID: -1416428731
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: moonish
+      rect:
+        serializedVersion: 2
+        x: 196
+        y: 324
+        width: 72
+        height: 72
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: adfc942cee754f34984848e7fcdba146
+      internalID: -612269362
       vertices: []
       indices: 
       edges: []
@@ -1349,6 +1454,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
+      Enemysprite2: -274434493
       Laser_Special: -1925798792
       Sprites_0: 23622274
       Sprites_1: 2051961941
@@ -1406,7 +1512,11 @@ TextureImporter:
       Sprites_7: 769456978
       Sprites_8: 1944596532
       Sprites_9: -1197561265
+      TP1: 1797319574
+      TP2: 1217978425
+      TP3: -1416428731
       VoidBallPickup: -1701640408
+      moonish: -612269362
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0

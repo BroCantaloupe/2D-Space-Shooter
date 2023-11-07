@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Powerup : MonoBehaviour
 {
-    private int speed = 3;
+    private float _speed = 3;
     [SerializeField]
     private int powerupID;
     [SerializeField]
@@ -16,6 +16,10 @@ public class Powerup : MonoBehaviour
     //4 = health
     //5 = special fire
 
+    //6 = slow
+    //7 = teleport
+    //8 = blindness
+
     private void Start()
     {
         Player player = GameObject.Find("Player").GetComponent<Player>();
@@ -23,11 +27,15 @@ public class Powerup : MonoBehaviour
         {
             Debug.LogError("player is NULL");
         }
+        if(powerupID > 5)
+        {
+            _speed = 1.8f;
+        }
     }
 
     void Update()
     {
-        transform.Translate(speed * Time.deltaTime * Vector3.down);
+        transform.Translate(_speed * Time.deltaTime * Vector3.down);
         if (transform.position.y < -7)
         {
             Destroy(this.gameObject);
@@ -60,6 +68,15 @@ public class Powerup : MonoBehaviour
                         break;
                     case 5:
                         player.ToggleVoidBall();
+                        break;
+                    case 6:
+                        player.SlowActive();
+                        break;
+                    case 7:
+                        player.Teleport();
+                        break;
+                    case 8:
+                        player.BlindnessActive();
                         break;
                     default: Debug.Log("Invalid Powerup");
                         break;

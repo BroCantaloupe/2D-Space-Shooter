@@ -41,7 +41,7 @@ public class LaserBehavior : MonoBehaviour
     private void MoveDown()
     {
         Vector3 direction = new Vector3(0, 1);
-        transform.Translate(direction * _enemyBulletSpeed * Time.deltaTime);
+        transform.Translate(_enemyBulletSpeed * Time.deltaTime * direction);
         if (transform.position.y <= -7.5f)
         {
             if (transform.parent != null)
@@ -66,6 +66,7 @@ public class LaserBehavior : MonoBehaviour
             if(other != null)
             {
                 player.Damage();
+                player.StartInvincibility();
             }
         }
         if (other.CompareTag("Laser"))

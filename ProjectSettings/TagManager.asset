@@ -54,3 +54,6 @@ TagManager:
   - name: Explosion
     uniqueID: 2372986921
     locked: 0
+  - name: Cover
+    uniqueID: 1895007897
+    locked: 0

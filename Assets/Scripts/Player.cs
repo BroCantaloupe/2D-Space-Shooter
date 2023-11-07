@@ -8,8 +8,11 @@ public class Player : MonoBehaviour
     private float _verticalInput;
     private float _speed = 6f;
     private float _boostSpeed = 10f;
+    private float _slowSpeed = 3.5f;
     private float _shiftSpeed = 0f;
     private float _shiftTime = 1.0f;
+    private BoxCollider2D _collider;
+
 
     private float _fireRate = 0.3f;
     private Vector3 _laserOffset = new(0, 0.5f ,0);
@@ -24,8 +27,11 @@ public class Player : MonoBehaviour
     private int _laserAmmo = 15;
 
     int _lives = 3;
+    private bool _spawnChasers;
+    private bool _spawnTurrets;
     SpawnManager _spawnManager;
     private bool _isSpeedBoostActive;
+    private bool _isSlowActive;
     private bool _isTripleShotActive;
     private bool _isSheildActive;
     private bool _isVoidBallActive;
@@ -33,6 +39,8 @@ public class Player : MonoBehaviour
     private int _shieldLives;
     [SerializeField]
     private GameObject _shieldVisualizer;
+    [SerializeField]
+    private GameObject _blindness;
 
     [SerializeField]
     private GameObject _leftEngine, _rightEngine;
@@ -42,6 +50,7 @@ public class Player : MonoBehaviour
     [SerializeField]
     private GameObject _voidBallPrefab;
     private Animator _cameraAnimator;
+    private SpriteRenderer _spriteRenderer;
     void Start()
     {
         transform.position = new Vector3(0, 0, 0);
@@ -49,7 +58,16 @@ public class Player : MonoBehaviour
         _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
         _audioSource = GetComponent<AudioSource>();
         _cameraAnimator = GameObject.Find("Main Camera").GetComponent<Animator>();
-
+        _spriteRenderer = GetComponent<SpriteRenderer>();
+        _collider = GetComponent<BoxCollider2D>();
+        if(_collider == null)
+        {
+            Debug.LogError("Collider is NULL");
+        }
+        if(_spriteRenderer == null)
+        {
+            Debug.LogError("Sprite Renderer NULL");
+        }
         if(_cameraAnimator == null)
         {
             Debug.LogError("Camera Animator is NULL");
@@ -91,7 +109,22 @@ public class Player : MonoBehaviour
             StartCoroutine(VoidBallRespawn());
         }
 
-        
+        if(_score >= 100 && _spawnChasers == false)
+        {
+            _spawnManager.StartChaserCoroutine();
+            _spawnChasers = true;
+        }
+        if(_score >= 700 && _spawnTurrets == false)
+        {
+            _spawnManager.StartTurretRoutine();
+            _spawnTurrets = true;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            _spawnManager.StartTurretRoutine();
+
+        }
     }
 
     IEnumerator VoidBallRespawn()
@@ -102,7 +135,7 @@ public class Player : MonoBehaviour
 
     void CalculateMovement()
     {
-        if (Input.GetKey(KeyCode.LeftShift))
+        if (Input.GetKey(KeyCode.LeftShift) && _isSlowActive == false)
         {
             if(_isSpeedBoostActive == true)
             {
@@ -138,7 +171,11 @@ public class Player : MonoBehaviour
         _verticalInput = Input.GetAxis("Vertical");
         Vector3 direction = new(_horizontalInput, _verticalInput, 0);
         
-        if(_isSpeedBoostActive == false)
+        if(_isSlowActive == true)
+        {
+            transform.Translate((_slowSpeed + _shiftSpeed) * Time.deltaTime * direction);
+        }
+        else if(_isSpeedBoostActive == false)
         {
             transform.Translate((_speed + _shiftSpeed) * Time.deltaTime * direction);
         }
@@ -225,6 +262,39 @@ public class Player : MonoBehaviour
         _isSpeedBoostActive = false;
     }
 
+    public void SlowActive()
+    {
+        _isSlowActive = true;
+        StartCoroutine(SlowPowerDownRoutine());
+        _spriteRenderer.color = new Color(0.25f, 0.75f, 1, 1);
+    }
+
+    IEnumerator SlowPowerDownRoutine()
+    {
+        yield return new WaitForSeconds(5f);
+        _isSlowActive = false;
+        _spriteRenderer.color = Color.white;
+    }
+
+    public void Teleport()
+    {
+        float randomX = Random.Range(-11f, 11f);
+        float randomY = Random.Range(-5f, 0f);
+        transform.position = new Vector3(randomX, randomY, 0);
+    }
+
+    public void BlindnessActive()
+    {
+        _blindness.SetActive(true);
+        StartCoroutine(BlindnessPowerDownRoutine());
+    }
+
+    IEnumerator BlindnessPowerDownRoutine()
+    {
+        yield return new WaitForSeconds(12f);
+        _blindness.SetActive(false);
+    }
+
     public void ShieldGet()
     {
         if (_shieldLives < _lives)
@@ -240,6 +310,7 @@ public class Player : MonoBehaviour
     {
         _score += points;
         _uiManager.UpdateScore(_score);
+        _spawnManager.UpdateScore(_score);
     }
 
     public void AddLife()
@@ -255,7 +326,7 @@ public class Player : MonoBehaviour
 
     public void AddAmmo()
     {
-        _laserAmmo += 5;
+        _laserAmmo += 10;
         if(_laserAmmo > 30)
         {
             _laserAmmo = 30;
@@ -296,5 +367,31 @@ public class Player : MonoBehaviour
         }
 
     }
-    
+
+    public void StartInvincibility()
+    {
+        StartCoroutine(InvincibiltyRoutine());
+        _collider.enabled = false;
+    }
+
+    IEnumerator InvincibiltyRoutine()
+    {
+        yield return new WaitForSeconds(1f);
+        _collider.enabled = true;
+    }
+    //
+    //
+    //
+    //
+    //
+    //enemy pickup behavior - make enemys try and destroy pickups (hmmm)
+    //enemy avoid shot - enemies will try and strafe away from lasers, cant see void balls
+    //homing projectile - rare homing missile powerup
+    //boss AI - final wave - after the score reaches a certain point, the text will turn red indicating the next wave is the boss wave
+    //boss AI part 2 - boss wave will be designed to spawn specific enemies as opposed to RNG, when enemies are all cleared, boss
+    //boss AI part 3 - design the boss...................
+
+    //bonus? - new player type, redesign
+    //story scene after pressing start, controls as well
+
 }
