@@ -384,7 +384,8 @@ public class Player : MonoBehaviour
     //
     //
     //
-    //enemy pickup behavior - make enemys try and destroy pickups (hmmm)
+    //
+    //pickup collect - c key can move pickups toward player.........
     //enemy avoid shot - enemies will try and strafe away from lasers, cant see void balls
     //homing projectile - rare homing missile powerup
     //boss AI - final wave - after the score reaches a certain point, the text will turn red indicating the next wave is the boss wave

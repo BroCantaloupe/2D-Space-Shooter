@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 5873682489996800163}
   m_Layer: 0
   m_Name: Void_Ball_Pickup_Container
-  m_TagString: Untagged
+  m_TagString: Powerup
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

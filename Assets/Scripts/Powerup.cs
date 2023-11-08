@@ -9,6 +9,9 @@ public class Powerup : MonoBehaviour
     private int powerupID;
     [SerializeField]
     private AudioClip _clip;
+    private bool _isDisabled;
+    private Transform _playerTransform;
+    private bool _isMovingTowardPlayer;
     //0 = triple
     //1 = speed
     //2 = shield
@@ -23,6 +26,11 @@ public class Powerup : MonoBehaviour
     private void Start()
     {
         Player player = GameObject.Find("Player").GetComponent<Player>();
+        _playerTransform = GameObject.Find("Player").GetComponent<Transform>();
+        if(_playerTransform == null)
+        {
+            Debug.LogError("Player Transform NULL");
+        }
         if (player == null)
         {
             Debug.LogError("player is NULL");
@@ -35,16 +43,28 @@ public class Powerup : MonoBehaviour
 
     void Update()
     {
-        transform.Translate(_speed * Time.deltaTime * Vector3.down);
+        if (_isMovingTowardPlayer)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, _playerTransform.position, ((2 * _speed) * Time.deltaTime));
+        }
+        else
+        {
+            transform.Translate(_speed * Time.deltaTime * Vector3.down);
+        }
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            _isMovingTowardPlayer = true;
+        }
         if (transform.position.y < -7)
         {
             Destroy(this.gameObject);
         }
+        transform.rotation = new Quaternion(0, 0, 0, 0);
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") && _isDisabled == false)
         {
             AudioSource.PlayClipAtPoint(_clip, transform.position);
             Player player = GameObject.Find("Player").GetComponent<Player>();
@@ -84,6 +104,16 @@ public class Powerup : MonoBehaviour
                 }
             }
             Destroy(this.gameObject);
+        }
+        else if(other.CompareTag("Player") && _isDisabled)
+        {
+            Destroy(this.gameObject);
+        }
+        if (other.CompareTag("SmartMovement"))
+        {
+            _isDisabled = true;
+            SpriteRenderer powerupSprite = GetComponent<SpriteRenderer>();
+            powerupSprite.color = Color.blue;
         }
     }
 

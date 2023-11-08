@@ -8,6 +8,8 @@ TagManager:
   - Laser
   - Enemy Laser
   - Void Ball
+  - Powerup
+  - SmartMovement
   layers:
   - Default
   - TransparentFX

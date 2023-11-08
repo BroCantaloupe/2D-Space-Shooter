@@ -17,6 +17,10 @@ public class EnemyChaser : MonoBehaviour
     private bool _isShieldActive;
     [SerializeField]
     private GameObject _shieldVisualizer;
+    private float _acceleration = -20f;
+    private bool _slowdownActive;
+    [SerializeField]
+    private GameObject _lightningPrefab;
 
     private void Start()
     {
@@ -61,20 +65,20 @@ public class EnemyChaser : MonoBehaviour
     void CalculateMovement()
     {
         transform.Translate(Vector3.down * _speed * Time.deltaTime);
+        if (_slowdownActive)
+        {
+            _speed += _acceleration * Time.deltaTime;
+        }
     }
 
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if(other.CompareTag("Player") || other.CompareTag("Laser") && _isShieldActive == true)
+        if(other.CompareTag("Laser") && _isShieldActive == true)
         {
             _isShieldActive = false;
             _shieldVisualizer.SetActive(false);
-            if(_player != null)
-            {
-                _player.Damage();
-                _player.StartInvincibility();
-            }
+            
         }
         else if (other.gameObject.CompareTag("Player") && _explosionSequence == false)
         {
@@ -137,5 +141,21 @@ public class EnemyChaser : MonoBehaviour
         _spawnManager.NewEnemyPowerup(transform.position);
     }
 
+    public void StartPowerupDestroyRoutine(Transform powerupTransform)
+    {
+        StartCoroutine(PowerupDestroyPowerDownRoutine());
+        _slowdownActive = true;
+        Vector3 vectorToPowerup = powerupTransform.position - transform.position;
+        float angle = Mathf.Atan2(vectorToPowerup.y, vectorToPowerup.x) * Mathf.Rad2Deg - 180;
+        Quaternion q = Quaternion.AngleAxis(angle, Vector3.forward);
+        GameObject lightning = Instantiate(_lightningPrefab, transform.position, q);
+        Destroy(lightning, 0.4f);
+    }
 
+    IEnumerator PowerupDestroyPowerDownRoutine()
+    {
+        yield return new WaitForSeconds(0.2f);
+        _slowdownActive = false;
+        _speed = 5f;
+    }
 }
