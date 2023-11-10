@@ -63,5 +63,27 @@ public class EnemySmartMovement : MonoBehaviour
 
             }
         }
+        if (collision.CompareTag("Laser"))
+        {
+            if (enemyID == 0)
+            {
+                int dodgeChance = Random.Range(0, 3); //1 in 3
+                if (dodgeChance == 0)
+                {
+                    Transform laserTransform = collision.GetComponent<Transform>();
+                    Transform enemyTransform = GetComponent<Transform>();
+                    if (laserTransform.position.x > enemyTransform.position.x) //true is left, false is right
+                    {
+                        _enemy.StartDodge(true);
+                        //move to the left, laser is right
+                    }
+                    else if (laserTransform.position.x <= enemyTransform.position.x)
+                    {
+                        _enemy.StartDodge(false);
+                        //move to the right, laser is left
+                    }
+                }
+            }
+        }
     }
 }

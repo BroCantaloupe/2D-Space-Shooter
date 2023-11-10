@@ -28,6 +28,8 @@ public class Enemy : MonoBehaviour
     private bool _isAimActive;
     private bool _isLaunchActive;
     private float _launchSpeed = 18f;
+    private bool _isDodgeLeft;
+    private bool _isDodgeRight;
 
     private Transform _playerTransform;
     private float _rotateSpeed = 20f;
@@ -101,7 +103,14 @@ public class Enemy : MonoBehaviour
             transform.Translate(Vector3.down * _launchSpeed * Time.deltaTime);
             _thruster.SetActive(true);
         }
-
+        if (_isDodgeLeft)
+        {
+            transform.Translate(Vector3.left * _launchSpeed * Time.deltaTime);
+        }
+        if (_isDodgeRight)
+        {
+            transform.Translate(Vector3.right * _launchSpeed * Time.deltaTime);
+        }
     }
 
     private void FacingPlayer()
@@ -205,7 +214,10 @@ public class Enemy : MonoBehaviour
     IEnumerator RamRoutine()
     {
         yield return new WaitForSeconds(0.5f);
-        _speed = 4f;
+        if (_explosionSequence == false)
+        {
+            _speed = 4f;
+        }
         transform.rotation = new Quaternion(0, 0, 0, 0);
         _isRamActive = false;
     }
@@ -245,5 +257,28 @@ public class Enemy : MonoBehaviour
             _player.Damage();
             _player.StartInvincibility();
         }
+    }
+
+    public void StartDodge(bool isDodgeLeft)
+    {
+        if (_explosionSequence == false)
+        {
+            if (isDodgeLeft == true)
+            {
+                _isDodgeLeft = true;
+            }
+            else
+            {
+                _isDodgeRight = true;
+            }
+            StartCoroutine(DodgePowerDownRoutine());
+        }
+    }
+
+    IEnumerator DodgePowerDownRoutine()
+    {
+        yield return new WaitForSeconds(0.1f);
+        _isDodgeLeft = false;
+        _isDodgeRight = false;
     }
 }
