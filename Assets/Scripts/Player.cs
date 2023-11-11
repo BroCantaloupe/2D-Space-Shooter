@@ -25,6 +25,9 @@ public class Player : MonoBehaviour
     [SerializeField]
     private Object _tripleShotPrefab;
     private int _laserAmmo = 15;
+    [SerializeField]
+    private GameObject _missilePrefab;
+    private int _missileAmmo = 10;
 
     int _lives = 3;
     private bool _spawnChasers;
@@ -122,7 +125,7 @@ public class Player : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Q))
         {
-            _spawnManager.StartTurretRoutine();
+            Instantiate(_missilePrefab, transform.position, Quaternion.identity);
 
         }
     }

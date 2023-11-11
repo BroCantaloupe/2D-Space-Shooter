@@ -117,15 +117,15 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Sprites_0
+      name: Missile_2
       rect:
         serializedVersion: 2
-        x: 0
-        y: 793
-        width: 320
-        height: 118
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        x: 241
+        y: 817
+        width: 14
+        height: 40
+      alignment: 9
+      pivot: {x: 0.54, y: 0.85}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -1427,7 +1427,7 @@ TextureImporter:
         width: 72
         height: 72
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -1435,6 +1435,48 @@ TextureImporter:
       bones: []
       spriteID: adfc942cee754f34984848e7fcdba146
       internalID: -612269362
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Missile_1
+      rect:
+        serializedVersion: 2
+        x: 225
+        y: 817
+        width: 14
+        height: 40
+      alignment: 9
+      pivot: {x: 0.54, y: 0.85}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f919736493c1b984d8fa4715ace0cb5b
+      internalID: 286861097
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Missile_0
+      rect:
+        serializedVersion: 2
+        x: 209
+        y: 817
+        width: 14
+        height: 40
+      alignment: 9
+      pivot: {x: 0.54, y: 0.85}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e1373151c9aa3854786afe9e89bde1a4
+      internalID: 1298090185
       vertices: []
       indices: 
       edges: []
@@ -1456,7 +1498,9 @@ TextureImporter:
     nameFileIdTable:
       Enemysprite2: -274434493
       Laser_Special: -1925798792
-      Sprites_0: 23622274
+      Missile_0: 1298090185
+      Missile_1: 286861097
+      Missile_2: 23622274
       Sprites_1: 2051961941
       Sprites_10: 1648970851
       Sprites_11: -1059254763
