@@ -18,6 +18,8 @@ public class Enemy : MonoBehaviour
     private GameObject _shieldVisualizer;
     [SerializeField]
     private GameObject _thruster;
+    [SerializeField]
+    private GameObject _smartMovementPrefab;
 
     private float _fireRate = 3f;
     private float _canFire = -1;
@@ -58,6 +60,7 @@ public class Enemy : MonoBehaviour
         {
             Debug.LogError("powerup is NULL");
         }
+        Instantiate(_smartMovementPrefab, transform.position, Quaternion.identity);
         int shieldChance = Random.Range(0, 7);
         if(shieldChance == 0)
         {
@@ -171,7 +174,7 @@ public class Enemy : MonoBehaviour
             Object.Destroy(other.gameObject);
             if(_player != null)
             {
-                _player.AddScore(25);
+                _player.AddScore(10);
             }
             _explosionAnim.SetTrigger("OnEnemyDeath");
             Object.Destroy(this.gameObject, 1.1f);
@@ -190,7 +193,7 @@ public class Enemy : MonoBehaviour
             _speed = 0;
             if (_player != null)
             {
-                _player.AddScore(50);
+                _player.AddScore(10);
             }
             _explosionAnim.SetTrigger("OnEnemyDeath");
             Object.Destroy(this.gameObject, 1.1f);

@@ -207,7 +207,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _explosionPrefab: {fileID: 1906681725619636279, guid: 6facf99c1582686408a0c0faa061f99a, type: 3}
-  _spawnManager: {fileID: 0}
   _shieldVisualizer: {fileID: 1529153212}
 --- !u!61 &6941250103432657722
 BoxCollider2D:
@@ -270,7 +269,7 @@ GameObject:
   - component: {fileID: 1818766466}
   m_Layer: 0
   m_Name: Enemy_Turret
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

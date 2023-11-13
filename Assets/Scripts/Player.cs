@@ -30,8 +30,12 @@ public class Player : MonoBehaviour
     private int _missileAmmo = 10;
 
     int _lives = 3;
-    private bool _spawnChasers;
-    private bool _spawnTurrets;
+    private bool _isWaveActive;
+    private bool _isWave1Called;
+    private bool _isWave2Called;
+    private bool _isWave3Called;
+    private bool _isWave4Called;
+
     SpawnManager _spawnManager;
     private bool _isSpeedBoostActive;
     private bool _isSlowActive;
@@ -112,15 +116,36 @@ public class Player : MonoBehaviour
             StartCoroutine(VoidBallRespawn());
         }
 
-        if(_score >= 100 && _spawnChasers == false)
+        if(_score == 60 && _isWave1Called == false)
         {
-            _spawnManager.StartChaserCoroutine();
-            _spawnChasers = true;
+            //wave 1 
+            _isWave1Called = true;
+            _isWaveActive = true;
+            _spawnManager.Wave1();
         }
-        if(_score >= 700 && _spawnTurrets == false)
+        if (_score == 220 && _isWave2Called == false)
         {
-            _spawnManager.StartTurretRoutine();
-            _spawnTurrets = true;
+            //2
+            _isWave2Called = true;
+            _isWaveActive = true;
+            _spawnManager.Wave2();
+
+        }
+        if (_score == 440 && _isWave3Called == false)
+        {
+            //3
+            _isWave3Called = true;
+            _isWaveActive = true;
+            _spawnManager.Wave3();
+
+        }
+        if (_score == 700 && _isWave4Called == false)
+        {
+            //4
+            _isWave4Called = true;
+            _isWaveActive = true;
+            _spawnManager.Wave4();
+
         }
 
         if (Input.GetKeyDown(KeyCode.Q))
@@ -390,10 +415,14 @@ public class Player : MonoBehaviour
     //
     //
     //
-    //homing projectile - rare homing missile powerup
-    //boss AI - final wave - after the score reaches a certain point, the text will turn red indicating the next wave is the boss wave
+    //boss AI - cutscene, new scene, touhou boss, breakout ball, create your own pbsyics, replace score with kills. 50 enemies from a pool
     //boss AI part 2 - boss wave will be designed to spawn specific enemies as opposed to RNG, when enemies are all cleared, boss
     //boss AI part 3 - design the boss...................
+
+    //boss 1- scene management, saving ammo and UI, planning
+    //boss 2- toohoo breakout ball behavior creating my own physics
+    //design 4 boss
+
 
     //bonus? - new player type, redesign
     //story scene after pressing start, controls as well

@@ -8,7 +8,15 @@ public class SpawnManager : MonoBehaviour
     private int _score = 0;
     bool _waveActive;
     private int _enemyCount;
-    private int _enemyCap = 8;
+
+
+    //less spawning
+    //slower waves, change waves to be activated through score, no longer time based but enemy based
+    //wave 1 SCORE = 60, 3 chasers, 2 enemy, 2 turret and 1 enemy = 8  
+    //wave 2 SCORE = 220, 2 chaser, 2 enemy, 2 enemy, 1 chaser 2 turret, 2 turret 2 enemy = 13
+    //wave 3 SCORE = 440, 3 enemy, enemy and chaser, 2 turret chaser, 4 enemy, 2 enemy 2 chaser = 16
+    //wave 4 SCORE = 700, 2 turret, 2 turret, 2 chaser 2 enemy, turret chaser enemy, chaser chaser chaser chaser, 2 turret, enemy x5 = 22
+    //= 59.... After final wave player moves foward, fade to black then fade into next scene
 
     [SerializeField]
     GameObject[] _enemy;
@@ -19,6 +27,12 @@ public class SpawnManager : MonoBehaviour
     UIManager _uiManager;
     [SerializeField]
     private GameObject[] _powerup;
+    [SerializeField]
+    private GameObject[] _evilPowerup;
+    [SerializeField]
+    private GameObject[] _superPowerup;
+    [SerializeField]
+    private GameObject[] _commonPowerup;
 
     private void Start()
     {
@@ -43,77 +57,19 @@ public class SpawnManager : MonoBehaviour
     
     IEnumerator SpawnEnemyRoutine()
     {
-        StartCoroutine(SpawnNewWave());
         yield return new WaitForSeconds(3f);
         while(_isDead == false)
         {
-            if (_enemyCount <= _enemyCap)
+            if (_waveActive == false)
             {
                 Vector3 posToSpawn = new(Random.Range(-8f, 8f), Random.Range(8f, 9f), 0);
-                GameObject newEnemy = Instantiate(_enemy[0], posToSpawn, Quaternion.identity);
+                int randomEnemy = Random.Range(0, 3);
+                GameObject newEnemy = Instantiate(_enemy[randomEnemy], posToSpawn, Quaternion.identity);
                 newEnemy.transform.parent = _enemyContainer.transform;
                 _enemyCount++;
 
             }
-            yield return new WaitForSeconds(Random.Range(2f, 4f));
-        }
-    }
-
-    public void StartChaserCoroutine()
-    {
-        StartCoroutine(SpawnEnemyChaserRoutine());
-    }
-
-    IEnumerator SpawnEnemyTurretRoutine()
-    {
-        yield return new WaitForSeconds(2f);
-        while(_isDead == false)
-        {
-            if (_enemyCount <= _enemyCap)
-            {
-                int doubleSpawn = Random.Range(0, 5);
-                float spawnPointX = Random.Range(-9.5f, 9.5f);
-                if (doubleSpawn == 0)
-                {
-                    float spawnPointX2 = spawnPointX * -1;
-                    Vector3 posToSpawnClone = new(spawnPointX2, 8, 0);
-                    GameObject newEnemy2 = Instantiate(_enemy[2], posToSpawnClone, Quaternion.identity);
-                    newEnemy2.transform.parent = _enemyContainer.transform;
-                    _enemyCount++;
-                }
-
-                Vector3 posToSpawn = new(spawnPointX, 8, 0);
-                GameObject newEnemy = Instantiate(_enemy[2], posToSpawn, Quaternion.identity);
-                newEnemy.transform.parent = _enemyContainer.transform;
-                _enemyCount++;
-
-            }
-            yield return new WaitForSeconds(Random.Range(8f, 10f));
-
-        }
-    }
-
-    public void StartTurretRoutine()
-    {
-        StartCoroutine(SpawnEnemyTurretRoutine());
-    }
-
-    IEnumerator SpawnEnemyChaserRoutine()
-    {
-        yield return new WaitForSeconds(2f);
-        while (_isDead == false)
-        {
-
-            if (_enemyCount <= _enemyCap)
-            {
-                Vector3 posToSpawn = new(Random.Range(-12f, 12f), 8, 0);
-                GameObject newEnemy = Instantiate(_enemy[1], posToSpawn, Quaternion.identity);
-                _enemyCount++;
-                newEnemy.transform.parent = _enemyContainer.transform;
-
-            }
-                yield return new WaitForSeconds(Random.Range(8f, 10f));
-               
+            yield return new WaitForSeconds(Random.Range(3f, 4f));
         }
     }
 
@@ -122,37 +78,33 @@ public class SpawnManager : MonoBehaviour
         yield return new WaitForSeconds(5f);
         while(_isDead == false)
         {
+            int evilPowerupChance = Random.Range(0, 4);
             Vector3 posToSpawn = new(Random.Range(-8f, 8f), 7, 0);
-            int randomPowerup = Random.Range(0, 7);
-            
-            Instantiate(_powerup[randomPowerup], posToSpawn, Quaternion.identity);
+            int randomPowerup = Random.Range(0, 5);
+            if (evilPowerupChance != 0)
+            {
+                Instantiate(_powerup[randomPowerup], posToSpawn, Quaternion.identity);
+            }
+            else
+            {
+                Instantiate(_evilPowerup[randomPowerup], posToSpawn, Quaternion.identity);
+                Instantiate(_commonPowerup[randomPowerup], posToSpawn, Quaternion.identity);
+            }
             yield return new WaitForSeconds(Random.Range(4f, 7f)); 
-        }
-    }
-
-    private void SpawnWavePowerup(int amount)
-    {
-        int powerup = Random.Range(5, 10); //shield, ammo, health, ammo, ammo
-        Vector3 posToSpawn = new(Random.Range(-4f, 4f), 7, 0);
-        Instantiate(_powerup[powerup],posToSpawn , Quaternion.identity);
-        amount--;
-        if(amount != 0)
-        {
-            SpawnWavePowerup(amount);
         }
     }
 
     public void NewEnemyPowerup(Vector3 enemyTransform)
     {
-        int specialPowerupChance = Random.Range(0, 11);
-        int randomEnemyPowerup = Random.Range(6,10);
+        int specialPowerupChance = Random.Range(0, 9);
+        int randomEnemyPowerup = Random.Range(0,5);
         if(specialPowerupChance != 0)
         {
             Instantiate(_powerup[randomEnemyPowerup], enemyTransform, Quaternion.identity);
         }
         else
         {
-            Instantiate(_powerup[10], enemyTransform, Quaternion.identity);
+            Instantiate(_superPowerup[0], enemyTransform, Quaternion.identity);
 
         }
     }
@@ -168,98 +120,192 @@ public class SpawnManager : MonoBehaviour
         _score = score;
     }
 
-    IEnumerator SpawnNewWave()
+    public void Wave1()
     {
-        if (_isDead == false)
-        {
-            yield return new WaitForSeconds(25f);
-            SpawnWavePowerup(Random.Range(2, 4));
-            _uiManager.ActivateWaveSlider();
+        StartCoroutine(Wave1Routine());
+        _uiManager.ActivateWaveSlider();
+        _waveActive = true;
 
-            float spawnPointX = Random.Range(-9.5f, 9.5f);
-            float spawnPointX2 = spawnPointX * -1;
-            Vector3 posToSpawnClone = new(spawnPointX2, 8, 0);
-            Vector3 posToSpawn = new(spawnPointX, 8, 0);
-
-            GameObject newEnemy = Instantiate(_enemy[2], posToSpawn, Quaternion.identity);
-            newEnemy.transform.parent = _enemyContainer.transform;
-            _enemyCount++;
-            GameObject newEnemy2 = Instantiate(_enemy[2], posToSpawnClone, Quaternion.identity);
-            newEnemy2.transform.parent = _enemyContainer.transform;
-            _enemyCount++;
-
-            yield return new WaitForSeconds(3.1f);
-            if (_score <= 200)
-            {
-                //small
-                _uiManager.UpdateWaveText("Small");
-                _uiManager.RunWaveUI(5f);
-                _waveActive = true;
-                StartCoroutine(EnemyWave());
-                yield return new WaitForSeconds(5f);
-                _waveActive = false;
-                StartCoroutine(SpawnNewWave());
-            }
-            else if (_score <= 600)
-            {
-                //medium
-                _uiManager.UpdateWaveText("Medium");
-                _uiManager.RunWaveUI(8f);
-                _waveActive = true;
-                StartCoroutine(EnemyWave());
-                yield return new WaitForSeconds(8f);
-                _waveActive = false;
-                StartCoroutine(SpawnNewWave());
-            }
-            else if (_score <= 1500)
-            {
-                //large
-                _uiManager.UpdateWaveText("Large");
-                _uiManager.RunWaveUI(10f);
-                _waveActive = true;
-                StartCoroutine(EnemyWave());
-                yield return new WaitForSeconds(10f);
-                _waveActive = false;
-                StartCoroutine(SpawnNewWave());
-            }
-            else if (_score <= 2200)
-            {
-                //huge
-                _uiManager.UpdateWaveText("Huge");
-                _uiManager.RunWaveUI(12f);
-                _waveActive = true;
-                StartCoroutine(EnemyWave());
-                yield return new WaitForSeconds(12f);
-                _waveActive = false;
-                StartCoroutine(SpawnNewWave());
-            }
-            else if (_score > 2200)
-            {
-                //danger
-                _uiManager.UpdateWaveText("Danger");
-                _uiManager.RunWaveUI(16f);
-                _waveActive = true;
-                StartCoroutine(EnemyWave());
-                yield return new WaitForSeconds(16f);
-                _waveActive = false;
-                StartCoroutine(SpawnNewWave());
-            }
-        }
     }
 
-    IEnumerator EnemyWave()
+    public void Wave2()
     {
-        if (_enemyCount <= _enemyCap)
-        {
-            Vector3 posToSpawn = new(Random.Range(-8f, 8f), Random.Range(8f, 8.5f), 0);
-            GameObject newEnemy = Instantiate(_enemy[Random.Range(0, 2)], posToSpawn, Quaternion.identity);
-            _enemyCount++;
-            newEnemy.transform.parent = _enemyContainer.transform;
-        }
-        if(_waveActive == true)
-        {
-            yield return new WaitForSeconds(1.5f);
-            StartCoroutine(EnemyWave());
-        }
+        StartCoroutine(Wave2Routine());
+        _uiManager.ActivateWaveSlider();
+        _waveActive = true;
+
     }
+
+    public void Wave3()
+    {
+        StartCoroutine(Wave3Routine());
+        _uiManager.ActivateWaveSlider();
+        _waveActive = true;
+
+    }
+
+    public void Wave4()
+    {
+        StartCoroutine(Wave4Routine());
+        _uiManager.ActivateWaveSlider();
+        _waveActive = true;
+
+    }
+
+    //less spawning
+    //slower waves, change waves to be activated through score, no longer time based but enemy based
+    //= 59.... After final wave player moves foward, fade to black then fade into next scene & 1000 points
+
+    IEnumerator Wave1Routine()
+    {
+        //wave 1 SCORE = 60, 3 chasers, 2 enemy, 2 turret and 1 enemy = 8  
+
+        yield return new WaitForSeconds(3.1f);
+        _uiManager.UpdateWaveText("Small");
+        _uiManager.RunWaveUI(8);
+        InstantiateChaser();
+        yield return new WaitForSeconds(0.3f);
+        InstantiateChaser();
+        yield return new WaitForSeconds(0.3f);
+        InstantiateChaser();
+        yield return new WaitForSeconds(2.2f);
+        InstantiateEnemy();
+        InstantiateEnemy();
+        yield return new WaitForSeconds(3f);
+        InstantiateTurret();
+        InstantiateTurret();
+        yield return new WaitForSeconds(1f);
+        InstantiateEnemy();
+        _waveActive = false;
+    }
+
+    IEnumerator Wave2Routine()
+    {
+        //wave 2 SCORE = 220, 2 chaser, 2 enemy, 2 enemy, 1 chaser 2 turret, 2 turret 2 enemy = 13
+
+        yield return new WaitForSeconds(3.1f);
+        _uiManager.UpdateWaveText("Medium");
+        _uiManager.RunWaveUI(13);
+        InstantiateChaser();
+        yield return new WaitForSeconds(0.45f);
+        InstantiateChaser();
+        yield return new WaitForSeconds(1.8f);
+        InstantiateEnemy();
+        yield return new WaitForSeconds(0.6f);
+        InstantiateEnemy();
+        yield return new WaitForSeconds(2.5f);
+        InstantiateEnemy();
+        InstantiateEnemy();
+        yield return new WaitForSeconds(3f);
+        InstantiateTurret();
+        yield return new WaitForSeconds(1f);
+        InstantiateTurret();
+        InstantiateChaser();
+        yield return new WaitForSeconds(2.6f);
+        InstantiateTurret();
+        InstantiateTurret();
+        InstantiateEnemy();
+        yield return new WaitForSeconds(1.2f);
+        InstantiateEnemy();
+        _waveActive = false;
+    }
+
+    IEnumerator Wave3Routine()
+    {
+        //wave 3 SCORE = 440, 3 enemy, enemy and chaser, 2 turret chaser, 4 enemy, 2 enemy 2 chaser = 16
+
+        yield return new WaitForSeconds(3.1f);
+        _uiManager.UpdateWaveText("Large");
+        _uiManager.RunWaveUI(16);
+        InstantiateEnemy();
+        yield return new WaitForSeconds(1.3f);
+        InstantiateEnemy();
+        InstantiateEnemy();
+        yield return new WaitForSeconds(3f);
+        InstantiateEnemy();
+        InstantiateChaser();
+        yield return new WaitForSeconds(2.8f);
+        InstantiateTurret();
+        InstantiateTurret();
+        InstantiateChaser();
+        InstantiateChaser();
+        yield return new WaitForSeconds(3.7f);
+        InstantiateEnemy();
+        InstantiateEnemy();
+        yield return new WaitForSeconds(1.4f);
+        InstantiateEnemy();
+        InstantiateEnemy();
+        yield return new WaitForSeconds(3.6f);
+        InstantiateChaser();
+        InstantiateChaser();
+        yield return new WaitForSeconds(1.2f);
+        InstantiateEnemy();
+        InstantiateEnemy();
+        _waveActive = false;
+    }
+
+    IEnumerator Wave4Routine()
+    {
+        //wave 4 SCORE = 700, 2 turret, 2 turret, 2 chaser 2 enemy, turret chaser enemy, chaser chaser chaser chaser, 2 turret, enemy x5 = 22
+
+        yield return new WaitForSeconds(3.1f);
+        _uiManager.UpdateWaveText("Danger");
+        _uiManager.RunWaveUI(22);
+        InstantiateTurret();
+        InstantiateTurret();
+        yield return new WaitForSeconds(2f);
+        InstantiateTurret();
+        InstantiateTurret();
+        yield return new WaitForSeconds(2.6f);
+        InstantiateEnemy();
+        InstantiateChaser();
+        yield return new WaitForSeconds(2f);
+        InstantiateEnemy();
+        InstantiateChaser();
+        yield return new WaitForSeconds(4f);
+        InstantiateEnemy();
+        InstantiateChaser();
+        InstantiateTurret();
+        yield return new WaitForSeconds(4f);
+        InstantiateChaser();
+        yield return new WaitForSeconds(1f);
+        InstantiateChaser();
+        yield return new WaitForSeconds(1f);
+        InstantiateChaser();
+        yield return new WaitForSeconds(1f);
+        InstantiateChaser();
+        yield return new WaitForSeconds(3.4f);
+        InstantiateTurret();
+        yield return new WaitForSeconds(1f);
+        InstantiateTurret();
+        yield return new WaitForSeconds(3f);
+        InstantiateEnemy();
+        InstantiateEnemy();
+        yield return new WaitForSeconds(1.7f);
+        InstantiateEnemy();
+        InstantiateEnemy();
+        InstantiateEnemy();
+        _waveActive = false;
+    }
+
+    private void InstantiateEnemy()
+    {
+        Vector3 posToSpawn = new(Random.Range(-8f, 8f), Random.Range(8f, 9f), 0);
+        GameObject newEnemy = Instantiate(_enemy[0], posToSpawn, Quaternion.identity);
+        newEnemy.transform.parent = _enemyContainer.transform;
+    }
+
+    private void InstantiateTurret()
+    {
+        Vector3 posToSpawn = new(Random.Range(-8f, 8f), Random.Range(8f, 9f), 0);
+        GameObject newEnemy = Instantiate(_enemy[2], posToSpawn, Quaternion.identity);
+        newEnemy.transform.parent = _enemyContainer.transform;
+    }
+    private void InstantiateChaser()
+    {
+        Vector3 posToSpawn = new(Random.Range(-8f, 8f), Random.Range(8f, 9f), 0);
+        GameObject newEnemy = Instantiate(_enemy[1], posToSpawn, Quaternion.identity);
+        newEnemy.transform.parent = _enemyContainer.transform;
+    }
+
 }

@@ -43,7 +43,7 @@ public class EnemyTurretBase : MonoBehaviour
             _spawnManager.EnemyCountMinus();
             if (_player != null)
             {
-                _player.AddScore(30);
+                _player.AddScore(10);
             }
             Instantiate(_explosionPrefab, transform.position, Quaternion.identity);
             Destroy(transform.parent.gameObject, 0.2f);
@@ -55,7 +55,7 @@ public class EnemyTurretBase : MonoBehaviour
             _spawnManager.EnemyCountMinus();
             if (_player != null)
             {
-                _player.AddScore(50);
+                _player.AddScore(10);
             }
             Instantiate(_explosionPrefab, transform.position, Quaternion.identity);
             Destroy(transform.parent.gameObject, 0.2f);

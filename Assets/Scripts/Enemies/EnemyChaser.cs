@@ -122,7 +122,7 @@ public class EnemyChaser : MonoBehaviour
             _speed = 0;
             if (_player != null)
             {
-                _player.AddScore(20);
+                _player.AddScore(10);
             }
             Instantiate(_explosionPrefab, transform.position, Quaternion.identity);
             Destroy(this.gameObject, 0.4f);
