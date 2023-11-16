@@ -22,7 +22,7 @@ public class SpawnManager : MonoBehaviour
     GameObject[] _enemy;
     [SerializeField]
     GameObject _enemyContainer;
-
+    GameManager _gameManager;
 
     UIManager _uiManager;
     [SerializeField]
@@ -37,7 +37,12 @@ public class SpawnManager : MonoBehaviour
     private void Start()
     {
         _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
-        if(_uiManager == null)
+        _gameManager = GameObject.Find("Game_Manager").GetComponent<GameManager>();
+        if (_gameManager == null)
+        {
+            Debug.LogError("Game Manager is NULL");
+        }
+        if (_uiManager == null)
         {
             Debug.LogError("UIManager is NULL");
         }
@@ -66,10 +71,9 @@ public class SpawnManager : MonoBehaviour
                 int randomEnemy = Random.Range(0, 3);
                 GameObject newEnemy = Instantiate(_enemy[randomEnemy], posToSpawn, Quaternion.identity);
                 newEnemy.transform.parent = _enemyContainer.transform;
-                _enemyCount++;
 
             }
-            yield return new WaitForSeconds(Random.Range(3f, 4f));
+            yield return new WaitForSeconds(Random.Range(2f, 4f));
         }
     }
 
@@ -162,7 +166,7 @@ public class SpawnManager : MonoBehaviour
 
         yield return new WaitForSeconds(3.1f);
         _uiManager.UpdateWaveText("Small");
-        _uiManager.RunWaveUI(8);
+        _uiManager.RunWaveUI(7);
         InstantiateChaser();
         yield return new WaitForSeconds(0.3f);
         InstantiateChaser();
@@ -216,7 +220,7 @@ public class SpawnManager : MonoBehaviour
 
         yield return new WaitForSeconds(3.1f);
         _uiManager.UpdateWaveText("Large");
-        _uiManager.RunWaveUI(16);
+        _uiManager.RunWaveUI(17);
         InstantiateEnemy();
         yield return new WaitForSeconds(1.3f);
         InstantiateEnemy();
@@ -228,15 +232,12 @@ public class SpawnManager : MonoBehaviour
         InstantiateTurret();
         InstantiateTurret();
         InstantiateChaser();
-        InstantiateChaser();
         yield return new WaitForSeconds(3.7f);
-        InstantiateEnemy();
         InstantiateEnemy();
         yield return new WaitForSeconds(1.4f);
         InstantiateEnemy();
         InstantiateEnemy();
         yield return new WaitForSeconds(3.6f);
-        InstantiateChaser();
         InstantiateChaser();
         yield return new WaitForSeconds(1.2f);
         InstantiateEnemy();
@@ -246,11 +247,11 @@ public class SpawnManager : MonoBehaviour
 
     IEnumerator Wave4Routine()
     {
-        //wave 4 SCORE = 700, 2 turret, 2 turret, 2 chaser 2 enemy, turret chaser enemy, chaser chaser chaser chaser, 2 turret, enemy x5 = 22
+        //wave 4 SCORE = 670, 2 turret, 2 turret, 2 chaser 2 enemy, turret chaser enemy, chaser chaser chaser chaser, 2 turret, enemy x5 = 22
 
         yield return new WaitForSeconds(3.1f);
         _uiManager.UpdateWaveText("Danger");
-        _uiManager.RunWaveUI(22);
+        _uiManager.RunWaveUI(24);
         InstantiateTurret();
         InstantiateTurret();
         yield return new WaitForSeconds(2f);
@@ -258,7 +259,6 @@ public class SpawnManager : MonoBehaviour
         InstantiateTurret();
         yield return new WaitForSeconds(2.6f);
         InstantiateEnemy();
-        InstantiateChaser();
         yield return new WaitForSeconds(2f);
         InstantiateEnemy();
         InstantiateChaser();
@@ -268,24 +268,15 @@ public class SpawnManager : MonoBehaviour
         InstantiateTurret();
         yield return new WaitForSeconds(4f);
         InstantiateChaser();
-        yield return new WaitForSeconds(1f);
-        InstantiateChaser();
-        yield return new WaitForSeconds(1f);
-        InstantiateChaser();
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(2f);
         InstantiateChaser();
         yield return new WaitForSeconds(3.4f);
         InstantiateTurret();
-        yield return new WaitForSeconds(1f);
-        InstantiateTurret();
         yield return new WaitForSeconds(3f);
-        InstantiateEnemy();
         InstantiateEnemy();
         yield return new WaitForSeconds(1.7f);
         InstantiateEnemy();
-        InstantiateEnemy();
-        InstantiateEnemy();
-        _waveActive = false;
+        StartCoroutine(NextSceneCheck());
     }
 
     private void InstantiateEnemy()
@@ -306,6 +297,25 @@ public class SpawnManager : MonoBehaviour
         Vector3 posToSpawn = new(Random.Range(-8f, 8f), Random.Range(8f, 9f), 0);
         GameObject newEnemy = Instantiate(_enemy[1], posToSpawn, Quaternion.identity);
         newEnemy.transform.parent = _enemyContainer.transform;
+    }
+
+    IEnumerator NextSceneCheck()
+    {
+        yield return new WaitForSeconds(2f);
+        GameObject[] enemiesLeft = GameObject.FindGameObjectsWithTag("Enemy");
+        foreach(var enemy in enemiesLeft)
+        {
+            _enemyCount++;
+        }
+        if(_enemyCount != 0)
+        {
+            _enemyCount = 0;
+            StartCoroutine(NextSceneCheck());
+        }
+        else
+        {
+            _gameManager.NextScene();
+        }
     }
 
 }

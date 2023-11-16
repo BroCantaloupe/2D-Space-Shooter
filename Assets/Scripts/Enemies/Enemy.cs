@@ -60,7 +60,8 @@ public class Enemy : MonoBehaviour
         {
             Debug.LogError("powerup is NULL");
         }
-        Instantiate(_smartMovementPrefab, transform.position, Quaternion.identity);
+        GameObject enemyMovement = Instantiate(_smartMovementPrefab, transform.position, Quaternion.identity);
+        enemyMovement.transform.parent = this.transform;
         int shieldChance = Random.Range(0, 7);
         if(shieldChance == 0)
         {
@@ -138,19 +139,7 @@ public class Enemy : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-
-        if (other.CompareTag("Laser") && _isShieldActive == true)
-        {
-            _isShieldActive = false;
-            _shieldVisualizer.SetActive(false);
-            if (_player != null)
-            {
-                _player.Damage();
-                _player.StartInvincibility();
-                Destroy(this.gameObject, 1.1f);
-            }
-        }
-        else if (other.gameObject.CompareTag("Player") && _explosionSequence == false)
+        if (other.gameObject.CompareTag("Player") && _explosionSequence == false)
         {
             _explosionSequence = true;
             _speed = 0;
@@ -158,33 +147,43 @@ public class Enemy : MonoBehaviour
             _explosionAnim.SetTrigger("OnEnemyDeath");
             Object.Destroy(gameObject, 1.1f);
             _isDead = true;
-            
-            if(_player != null)
+
+            if (_player != null)
             {
                 _player.Damage();
                 _player.StartInvincibility();
             }
             _spawnManager.EnemyCountMinus();
         }
-        else if(other.gameObject.CompareTag("Laser") && _explosionSequence == false)
+        else if (other.gameObject.CompareTag("Laser") && _explosionSequence == false)
         {
-            _explosionSequence = true;
-            _audioSource.Play();
-            _speed = 0;
-            Object.Destroy(other.gameObject);
-            if(_player != null)
+            if (_isShieldActive)
             {
-                _player.AddScore(10);
+                Object.Destroy(other.gameObject);
+                _isShieldActive = false;
+                _shieldVisualizer.SetActive(false);
             }
-            _explosionAnim.SetTrigger("OnEnemyDeath");
-            Object.Destroy(this.gameObject, 1.1f);
-            _isDead = true;
-            int powerupChance = Random.Range(0, 5);
-            if(powerupChance == 0)
+            else
             {
-                StartCoroutine(EnemyPowerup());
+                Object.Destroy(other.gameObject);
+
+                _explosionSequence = true;
+                _audioSource.Play();
+                _speed = 0;
+                if (_player != null)
+                {
+                    _player.AddScore(10);
+                }
+                _explosionAnim.SetTrigger("OnEnemyDeath");
+                Object.Destroy(this.gameObject, 1.1f);
+                _isDead = true;
+                int powerupChance = Random.Range(0, 5);
+                if (powerupChance == 0)
+                {
+                    StartCoroutine(EnemyPowerup());
+                }
+                _spawnManager.EnemyCountMinus();
             }
-            _spawnManager.EnemyCountMinus();
         }
         else if (other.gameObject.CompareTag("Void Ball") && _explosionSequence == false)
         {

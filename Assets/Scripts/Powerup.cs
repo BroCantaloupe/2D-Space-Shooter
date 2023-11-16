@@ -114,6 +114,10 @@ public class Powerup : MonoBehaviour
             _isDisabled = true;
             SpriteRenderer powerupSprite = GetComponent<SpriteRenderer>();
             powerupSprite.color = Color.blue;
+            if(powerupSprite == null)
+            {
+                return;
+            }
         }
     }
 

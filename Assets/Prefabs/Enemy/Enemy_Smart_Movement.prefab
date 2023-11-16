@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 1425569577815251959}
   m_Layer: 0
   m_Name: Enemy_Smart_Movement
-  m_TagString: Untagged
+  m_TagString: SmartMovement
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -47,6 +47,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyID: 0
+  _enemy: {fileID: 0}
+  _enemyChaser: {fileID: 0}
   _explosionPrefab: {fileID: 0}
 --- !u!58 &8893989650006476506
 CircleCollider2D:

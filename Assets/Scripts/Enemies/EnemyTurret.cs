@@ -54,9 +54,12 @@ public class EnemyTurret : MonoBehaviour
     void FacingPlayer()
     {
         Vector3 vectorToTarget = _playerTransform.transform.position - transform.position;
-        float angle = Mathf.Atan2(vectorToTarget.y, vectorToTarget.x) * Mathf.Rad2Deg - _angleModifier;
-        Quaternion q = Quaternion.AngleAxis(angle, Vector3.forward);
-        transform.rotation = Quaternion.Slerp(transform.rotation, q, Time.deltaTime * _rotateSpeed);
+        if (_playerTransform != null)
+        {
+            float angle = Mathf.Atan2(vectorToTarget.y, vectorToTarget.x) * Mathf.Rad2Deg - _angleModifier;
+            Quaternion q = Quaternion.AngleAxis(angle, Vector3.forward);
+            transform.rotation = Quaternion.Slerp(transform.rotation, q, Time.deltaTime * _rotateSpeed);
+        }
         _turretBase.transform.rotation = Quaternion.Euler(0, 0, 0);
     } 
 

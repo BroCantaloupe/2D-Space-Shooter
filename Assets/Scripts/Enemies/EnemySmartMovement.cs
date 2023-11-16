@@ -5,7 +5,9 @@ using UnityEngine;
 public class EnemySmartMovement : MonoBehaviour
 {
     public int enemyID;
+    [SerializeField]
     private Enemy _enemy;
+    [SerializeField]
     private EnemyChaser _enemyChaser;
     [SerializeField]
     private GameObject _explosionPrefab;
@@ -13,7 +15,7 @@ public class EnemySmartMovement : MonoBehaviour
     {
         if (enemyID == 0)
         {
-            _enemy = GameObject.Find("Enemy").GetComponentInParent<Enemy>();
+            _enemy = GetComponentInParent<Enemy>();
             if (_enemy == null)
             {
                 Debug.LogError("enemy is NULL");
@@ -21,12 +23,17 @@ public class EnemySmartMovement : MonoBehaviour
         }
         if(enemyID == 1)
         {
-            _enemyChaser = GameObject.Find("Enemy_Chaser").GetComponentInParent<EnemyChaser>();
+            _enemyChaser = GetComponentInParent<EnemyChaser>();
             if(_enemyChaser == null)
             {
                 Debug.LogError("Chaser is NULL");
             }
         }
+    }
+
+    public void AssignID(int id)
+    {
+        enemyID = id;
     }
 
 
@@ -58,7 +65,6 @@ public class EnemySmartMovement : MonoBehaviour
             if(enemyID == 1)
             {
                 Transform powerupTranform = collision.GetComponent<Transform>();
-                Transform enemyTransform = GetComponent<Transform>();
                 _enemyChaser.StartPowerupDestroyRoutine(powerupTranform);
 
             }

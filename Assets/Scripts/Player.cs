@@ -139,7 +139,7 @@ public class Player : MonoBehaviour
             _spawnManager.Wave3();
 
         }
-        if (_score == 700 && _isWave4Called == false)
+        if (_score == 670 && _isWave4Called == false)
         {
             //4
             _isWave4Called = true;
@@ -150,8 +150,10 @@ public class Player : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Q))
         {
-            Instantiate(_missilePrefab, transform.position, Quaternion.identity);
-
+            //Instantiate(_missilePrefab, transform.position, Quaternion.identity);
+            _isWave4Called = true;
+            _isWaveActive = true;
+            _spawnManager.Wave4();
         }
     }
 
@@ -325,10 +327,8 @@ public class Player : MonoBehaviour
 
     public void ShieldGet()
     {
-        if (_shieldLives < _lives)
-        {
-            _shieldLives++;
-        }
+        _shieldLives = 3;
+        
         _isSheildActive = true;
         _shieldVisualizer.SetActive(true);
         _uiManager.AddShieldLives(_shieldLives);
@@ -354,7 +354,7 @@ public class Player : MonoBehaviour
 
     public void AddAmmo()
     {
-        _laserAmmo += 10;
+        _laserAmmo += 16;
         if(_laserAmmo > 30)
         {
             _laserAmmo = 30;

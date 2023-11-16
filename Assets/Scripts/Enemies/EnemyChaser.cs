@@ -21,12 +21,18 @@ public class EnemyChaser : MonoBehaviour
     private bool _slowdownActive;
     [SerializeField]
     private GameObject _lightningPrefab;
-
+    [SerializeField]
+    private GameObject _smartMovementPrefab;
     private void Start()
     {
         _player = GameObject.Find("Player").transform.GetComponent<Player>();
         _playerTransform = GameObject.Find("Player").transform.GetComponent<Transform>();
         _spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
+        GameObject enemyMovement = Instantiate(_smartMovementPrefab, transform.position, Quaternion.identity);
+        enemyMovement.transform.parent = this.transform;
+        EnemySmartMovement movementAssign = enemyMovement.GetComponent<EnemySmartMovement>();
+        movementAssign.AssignID(1);
+        
         if (_player == null)
         {
             Debug.LogError("Player is NULL");
@@ -46,6 +52,7 @@ public class EnemyChaser : MonoBehaviour
             _shieldVisualizer.SetActive(true);
 
         }
+
     }
     void Update()
     {
@@ -57,9 +64,12 @@ public class EnemyChaser : MonoBehaviour
     void FacingPlayer()
     {
         Vector3 vectorToTarget = _playerTransform.transform.position - transform.position;
-        float angle = Mathf.Atan2(vectorToTarget.y, vectorToTarget.x) * Mathf.Rad2Deg - _angleModifier;
-        Quaternion q = Quaternion.AngleAxis(angle, Vector3.forward);
-        transform.rotation = Quaternion.Slerp(transform.rotation, q, Time.deltaTime * _rotateSpeed);
+        if (_playerTransform != null)
+        {
+            float angle = Mathf.Atan2(vectorToTarget.y, vectorToTarget.x) * Mathf.Rad2Deg - _angleModifier;
+            Quaternion q = Quaternion.AngleAxis(angle, Vector3.forward);
+            transform.rotation = Quaternion.Slerp(transform.rotation, q, Time.deltaTime * _rotateSpeed);
+        }
     }
 
     void CalculateMovement()
@@ -143,19 +153,20 @@ public class EnemyChaser : MonoBehaviour
 
     public void StartPowerupDestroyRoutine(Transform powerupTransform)
     {
-        StartCoroutine(PowerupDestroyPowerDownRoutine());
         _slowdownActive = true;
         Vector3 vectorToPowerup = powerupTransform.position - transform.position;
         float angle = Mathf.Atan2(vectorToPowerup.y, vectorToPowerup.x) * Mathf.Rad2Deg - 180;
         Quaternion q = Quaternion.AngleAxis(angle, Vector3.forward);
-        GameObject lightning = Instantiate(_lightningPrefab, transform.position, q);
-        Destroy(lightning, 0.4f);
+
+        StartCoroutine(PowerupDestroyPowerDownRoutine(q));
     }
 
-    IEnumerator PowerupDestroyPowerDownRoutine()
+    IEnumerator PowerupDestroyPowerDownRoutine(Quaternion q)
     {
-        yield return new WaitForSeconds(0.2f);
+        GameObject lightning = Instantiate(_lightningPrefab, transform.position, q);
+        yield return new WaitForSeconds(0.3f);
         _slowdownActive = false;
         _speed = 5f;
+        Destroy(lightning, 0.4f);
     }
 }

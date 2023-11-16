@@ -24,4 +24,9 @@ public class GameManager : MonoBehaviour
         _isGameOver = true;
     }
 
+    public void NextScene()
+    {
+        SceneManager.LoadScene(0);
+    }
+
 }
